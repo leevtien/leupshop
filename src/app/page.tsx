@@ -1,155 +1,416 @@
-'use client';
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Gamepad2, Briefcase, GraduationCap, Monitor, Paintbrush, Shield, Gift, FileText } from "lucide-react";
 
-
 export default function Home() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Kiểm tra nếu đã có dark mode trong localStorage
-    const savedMode = localStorage.getItem("darkMode");
-    if (savedMode === "true") {
-      setDarkMode(true);
-    }
+    setTimeout(() => setIsLoading(false), 800); // Giả lập thời gian tải
   }, []);
 
-  // const toggleDarkMode = () => {
-  //   setDarkMode(!darkMode);
-  //   localStorage.setItem("darkMode", (!darkMode).toString());
-  // };
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.5 }} 
+          animate={{ opacity: 1, scale: 1 }} 
+          transition={{ duration: 0.5 }}
+          className="text-2xl font-bold text-blue-600"
+        >
+          🚀 Đang tải...
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`min-h-screen ${darkMode ? "dark" : ""}`}>
-      {/* Toggle Dark Mode Button */}
-      {/* <div className="absolute top-4 right-4">
-        <button 
-          onClick={toggleDarkMode} 
-          className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.6 }}
+      className="min-h-screen"
+    >
+      {/* Sidebar Danh Mục */}
+      <div className="container mx-auto grid grid-cols-4 gap-4 p-4">
+        <motion.aside 
+          className="bg-white shadow-lg rounded-xl p-5 col-span-1"
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
-        </button>
-      </div> */}
-
-      {/* Hero Section */}
-      {/* <section className="relative w-full h-[500px] flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-center">
-        <motion.div 
-          className="container px-6"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h1 className="text-5xl font-bold">🎉 Mua Tài Khoản Premium Giá Rẻ!</h1>
-          <p className="mt-4 text-lg max-w-2xl mx-auto">
-            Netflix, Spotify, Canva, và nhiều hơn nữa! Trải nghiệm premium với giá tốt nhất.
-          </p>
-          <Link href="/products/premium">
-            <motion.button 
-              className="mt-6 bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
-              whileHover={{ scale: 1.1 }}
-            >
-              🔥 Xem sản phẩm ngay
-            </motion.button>
-          </Link>
-        </motion.div>
-      </section> */}
-      {/* Sidebar danh mục */}
-      {/* Hero Section - Dùng Grid */}
-      <div className="grid grid-cols-4 gap-4">
-        
-        {/* Sidebar Danh Mục */}
-        <aside className="bg-white shadow-lg rounded-xl p-5 col-span-1">
-          <ul className="space-y-4 text-gray-700">
+          <ul className="space-y-4 text-gray-700 ">
             {categories.map((category) => (
-              <li 
+              <motion.li 
                 key={category.name} 
                 className="flex items-center space-x-3 hover:text-blue-600 transition cursor-pointer hover:scale-105"
+                whileHover={{ scale: 1.05 }}
               >
                 {category.icon}
                 <span className="font-semibold">{category.name}</span>
-              </li>
+              </motion.li>
             ))}
           </ul>
-        </aside>
+        </motion.aside>
 
         {/* Banner Chính */}
-        <section className="relative bg-cover bg-center rounded-xl p-8 col-span-2 flex flex-col items-center text-center shadow-lg"
-            style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
-          >
-            <div className="absolute inset-0 bg-black opacity-20 rounded-xl"></div>
-            <h1 className="relative text-3xl font-bold mb-6 text-white bg-clip-text">
-              🚀 TỐI ƯU CÔNG VIỆC
-            </h1>
-            <div className="grid grid-cols-3 gap-6 relative">
-              {heroApps.map((app) => (
-                <div key={app.name} className="flex flex-col items-center space-y-2 hover:scale-105 transition">
-                  <Image src={app.image} alt={app.name} width={70} height={70} className="rounded-xl shadow-md" />
-                  <span className="text-md font-semibold text-white">{app.name}</span>
-                </div>
-              ))}
-            </div>
-        </section>
-
-        {/* Banners Phụ Bên Phải */}
-        <aside className="col-span-1 flex flex-col space-y-4">
-          {sideBanners.map((banner) => (
-            <div 
-              key={banner.title} 
-              className="bg-blue-500 text-white p-6 rounded-xl text-center hover:shadow-xl hover:scale-105 transition transform"
-            >
-              <h3 className="text-lg font-bold">{banner.title}</h3>
-              <p className="text-xl font-bold">{banner.price}</p>
-            </div>
-          ))}
-        </aside>
+        <motion.section 
+          className="relative bg-cover bg-center rounded-xl col-span-2 flex flex-col items-center text-center shadow-lg"
+          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+        >
+          <div className="relative w-full h-full">
+                <Image
+                  src="/images/hero.png"
+                  alt="hero"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+          
+        </motion.section>
+        
+        <motion.section className="col-span-1 flex flex-col space-y-4">
+        <div className="relative w-full h-1/2">
+                <Image
+                  src="/images/vpn.png"
+                  alt="hero"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+              <div className="relative w-full h-1/2">
+                <Image
+                  src="/images/ai.png"
+                  alt="hero"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+        </motion.section>
+        
       </div>
+       
 
-      {/* Banners Dưới */}
-      <div className="grid grid-cols-4 gap-4 mt-6">
-        {bottomBanners.map((banner) => (
-          <div 
-            key={banner.title} 
-            className="bg-gray-200 p-6 rounded-xl flex flex-col items-center hover:shadow-lg hover:scale-105 transition"
-          >
-            <h3 className="text-lg font-bold">{banner.title}</h3>
-            <p className="text-blue-600 text-xl font-bold">{banner.price}</p>
-          </div>
-        ))}
-      </div>
+      {/* Sản phẩm nổi bật */}
+      <section className="container mx-auto px-4 mt-10 text-black">
+        <motion.h2 
+          className="text-2xl font-bold"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+        >
+          Sản phẩm nổi bật
+        </motion.h2>
 
-      {/* Danh mục sản phẩm phổ biến */}
-      <section className="container mx-auto my-12 px-4">
-        <h2 className="text-3xl font-bold text-center mb-6">Sản phẩm phổ biến</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {popularProducts.map((product, index) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4">
+          {products.map((product, index) => (
+            
             <motion.div 
-              key={product.id} 
-              className="bg-white shadow-lg rounded-lg p-4 hover:scale-105 transition-transform dark:bg-gray-800 dark:text-white"
+              key={product.id}
+              className="bg-white transition"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
+              // transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              
             >
-              <Image src={product.image} alt={product.name} width={200} height={200} className="mx-auto" />
-              <h3 className="text-xl font-semibold mt-2">{product.name}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{product.description}</p>
-              <p className="text-lg font-bold text-blue-600">€{product.price}</p>
-              <Link href="/products/premium">
-                <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-                  Mua ngay
-                </button>
+            <Link href={`/products/${product.id}`} passHref>
+            <div>
+            
+              {/* Hình ảnh sản phẩm */}
+              <div className="relative w-full h-40">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+              {/* Thông tin sản phẩm */}
+              <div className="mt-3">
+                <p className="text-gray-500 text-sm">{product.description}</p>
+                <div className="flex items-center">
+                  <span className="text-lg font-bold text-black-500">{product.price}€</span>
+                </div>
+              </div>
+                </div>
               </Link>
             </motion.div>
           ))}
         </div>
       </section>
-    </div>
+
+      {/* sản phâm bán chạy */}
+      <section className="w-full bg-blue-500 py-10 mt-10">
+        <motion.h2 
+          className="text-2xl font-bold container mx-auto text-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          
+        >
+          Sản phẩm bán chạy
+        </motion.h2>
+
+        <div className=" container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4">
+          {products.map((product, index) => (
+            
+            <motion.div 
+              key={product.id}
+              className="transition"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              // transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              
+            >
+            <Link href={`/products/${product.id}`} passHref>
+            <div>
+            
+              {/* Hình ảnh sản phẩm */}
+              <div className="relative w-full h-40">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+              {/* Thông tin sản phẩm */}
+              <div className="mt-3">
+                <p className="text-white text-sm">{product.description}</p>
+                <div className="flex items-center">
+                  <span className="text-lg font-bold text-white">{product.price}€</span>
+                </div>
+              </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* sản phâm mới */}
+      <section className="w-full bg-white py-10 mt-10">
+        <motion.h2 
+          className="text-2xl font-bold container mx-auto text-black"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          color="blue"
+        >
+          Sản phẩm mới
+        </motion.h2>
+
+        <div className=" container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4">
+          {products.map((product, index) => (
+            
+            <motion.div 
+              key={product.id}
+              className="transition"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              // transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              
+            >
+            <Link href={`/products/${product.id}`} passHref>
+            <div>
+            
+              {/* Hình ảnh sản phẩm */}
+              <div className="relative w-full h-40">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+              {/* Thông tin sản phẩm */}
+              <div className="mt-3">
+                <p className="text-black text-sm">{product.description}</p>
+                <div className="flex items-center">
+                  <span className="text-lg font-bold text-black">{product.price}€</span>
+                </div>
+              </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+      
+      {/* Hoc tập */}
+      <section className="container mx-auto px-4 mt-10">
+        <motion.h2 
+          className="text-2xl font-bold text-black"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+        >
+          Học tập
+        </motion.h2>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4">
+          {products.map((product, index) => (
+            
+            <motion.div 
+              key={product.id}
+              className="bg-white transition"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              // transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              
+            >
+            <Link href={`/products/${product.id}`} passHref>
+            <div>
+            
+              {/* Hình ảnh sản phẩm */}
+              <div className="relative w-full h-40">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+              {/* Thông tin sản phẩm */}
+              <div className="mt-3">
+                <p className="text-gray-500 text-sm">{product.description}</p>
+                <div className="flex items-center">
+                  <span className="text-lg font-bold text-black">{product.price}€</span>
+                </div>
+              </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Giải trí */}
+      <section className="w-full bg-white py-10 mt-10">
+        <motion.h2 
+          className="text-2xl font-bold container mx-auto text-black"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          color="blue"
+        >
+          Giải trí
+        </motion.h2>
+
+        <div className=" container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4">
+          {products.map((product, index) => (
+            
+            <motion.div 
+              key={product.id}
+              className="transition"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              // transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              
+            >
+            <Link href={`/products/${product.id}`} passHref>
+            <div>
+            
+              {/* Hình ảnh sản phẩm */}
+              <div className="relative w-full h-40">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+              {/* Thông tin sản phẩm */}
+              <div className="mt-3">
+                <p className="text-black text-sm">{product.description}</p>
+                <div className="flex items-center">
+                  <span className="text-lg font-bold text-black">{product.price}€</span>
+                </div>
+              </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Công việc */}
+      <section className="w-full bg-white py-10 mt-10">
+        <motion.h2 
+          className="text-2xl font-bold container mx-auto text-black"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          color="blue"
+        >
+          Công việc
+        </motion.h2>
+
+        <div className=" container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4">
+          {products.map((product, index) => (
+            
+            <motion.div 
+              key={product.id}
+              className="transition"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              // transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              
+            >
+            <Link href={`/products/${product.id}`} passHref>
+            <div>
+            
+              {/* Hình ảnh sản phẩm */}
+              <div className="relative w-full h-40">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
+              {/* Thông tin sản phẩm */}
+              <div className="mt-3">
+                <p className="text-black text-sm">{product.description}</p>
+                <div className="flex items-center">
+                  <span className="text-lg font-bold text-black">{product.price}€</span>
+                </div>
+              </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+      
+    </motion.div>
+
+    
+    
   );
 }
-
-const popularProducts = [
+const products = [
   {
     id: "1",
     name: "Netflix Premium",
@@ -187,14 +448,26 @@ const popularProducts = [
   },
   {
     id: "6",
-    name: "HBO Max",
+    name: "Duolingo Super",
     price: 8.99,
-    description: "Tài khoản HBO Max 1 tháng.",
-    image: "/images/hbo.png",
+    description: "Tài khoản Duolingo Super 1 năm.",
+    image: "/images/duolingo.png",
+  },
+  {
+    id: "7",
+    name: "Chat GPT",
+    price: 9.99,
+    description: "Tài khoản Chat GPT 1 tháng.",
+    image: "/images/chatgpt.png",
+  },
+  {
+    id: "8",
+    name: "Windows 10 Pro",
+    price: 10.99,
+    description: "Key Windows 10 Pro bản quyền.",
+    image: "/images/windows.png",
   }
 ];
-
-
 
 const categories = [
   { name: "Giải trí", icon: <Gamepad2 size={22} className="text-blue-500" /> },
