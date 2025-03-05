@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
@@ -13,6 +15,11 @@ export default function Register() {
     e.preventDefault();
     setError("");
     setSuccessMessage("");
+
+    if (password !== confirmPassword) {
+      setError("Mật khẩu xác nhận không khớp!");
+      return;
+    }
 
     const res = await fetch("/api/auth/register", {
       method: "POST",
@@ -25,7 +32,7 @@ export default function Register() {
     if (res.ok) {
       setSuccessMessage("🎉 Đăng ký thành công! Chuyển hướng...");
       setTimeout(() => {
-        router.push("/auth/login");
+        router.push("/login");
       }, 2000);
     } else {
       setError(data.error || "Đã có lỗi xảy ra!");
@@ -41,7 +48,7 @@ export default function Register() {
           {successMessage}
         </div>
       )}
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <form onSubmit={handleRegister} className="space-y-4">
         <input 
@@ -60,10 +67,25 @@ export default function Register() {
           className="w-full p-2 border rounded"
           required
         />
+        <input 
+          type="password" 
+          placeholder="Xác nhận mật khẩu" 
+          value={confirmPassword} 
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">
           Đăng ký
         </button>
       </form>
+      
+      <p className="mt-6 text-center text-gray-600">
+        Đã có tài khoản? 
+        <Link href="/login" className="text-blue-600 hover:underline ml-1">
+          Đăng nhập
+        </Link>
+      </p>
     </div>
   );
 }

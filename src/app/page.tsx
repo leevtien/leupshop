@@ -3,10 +3,59 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Gamepad2, Briefcase, GraduationCap, Monitor, Paintbrush, Shield, Gift, FileText } from "lucide-react";
+import { Gamepad2, Briefcase, GraduationCap, Monitor, Paintbrush, Shield, Gift, FileText, ChevronDown, ChevronUp, ChevronRight, ChevronLeft } from "lucide-react";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [categoryExpanded, setCategoryExpanded] = useState(false);
+  const [currentBanner, setCurrentBanner] = useState(0);
+  
+  // Define banner slides here
+  const bannerSlides = [
+    {
+      id: 1,
+      image: "/images/hero.png",
+      alt: "Premium Streaming Services",
+      title: "Premium Services",
+      description: "Get access to Netflix, Spotify, and more at discounted prices"
+    },
+    {
+      id: 2,
+      image: "/images/vpn.png",
+      alt: "VPN Services",
+      title: "Secure Your Connection",
+      description: "Browse the web securely with our premium VPN solutions"
+    },
+    {
+      id: 3,
+      image: "/images/ai.png",
+      alt: "AI Tools",
+      title: "AI Productivity Tools",
+      description: "Enhance your workflow with cutting-edge AI tools"
+    }
+  ];
+
+  // Auto slide functionality
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBanner((prev) => (prev + 1) % bannerSlides.length);
+    }, 5000); // Change slide every 5 seconds
+    
+    return () => clearInterval(timer);
+  }, [bannerSlides.length]);
+  
+  // Handle manual navigation
+  const goToSlide = (index: number) => {
+    setCurrentBanner(index);
+  };
+  
+  const nextSlide = () => {
+    setCurrentBanner((prev) => (prev + 1) % bannerSlides.length);
+  };
+  
+  const prevSlide = () => {
+    setCurrentBanner((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length);
+  };
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800); // Giả lập thời gian tải
@@ -34,73 +83,161 @@ export default function Home() {
       transition={{ duration: 0.6 }}
       className="min-h-screen"
     >
-      {/* Sidebar Danh Mục */}
-      <div className="container mx-auto grid grid-cols-4 gap-4 p-4">
-        <motion.aside 
-          className="bg-white shadow-lg rounded-xl p-5 col-span-1"
-          initial={{ x: -50, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <ul className="space-y-4 text-gray-700 ">
-            {categories.map((category) => (
-              <motion.li 
-                key={category.name} 
-                className="flex items-center space-x-3 hover:text-blue-600 transition cursor-pointer hover:scale-105"
-                whileHover={{ scale: 1.05 }}
-              >
-                {category.icon}
-                <span className="font-semibold">{category.name}</span>
-              </motion.li>
-            ))}
-          </ul>
-        </motion.aside>
-
-        {/* Banner Chính */}
-        <motion.section 
-          className="relative bg-cover bg-center rounded-xl col-span-2 flex flex-col items-center text-center shadow-lg"
-          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-        >
-          <div className="relative w-full h-full">
-                <Image
-                  src="/images/hero.png"
-                  alt="hero"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
-                />
-              </div>
+      {/* Responsive top section */}
+      <div className="container mx-auto p-4">
+        {/* Mobile category toggle */}
+        <div className="lg:hidden mb-4">
+          <button 
+            onClick={() => setCategoryExpanded(!categoryExpanded)} 
+            className="w-full bg-white shadow-lg rounded-xl p-3 flex justify-between items-center"
+          >
+            <span className="font-semibold">Danh Mục Sản Phẩm</span>
+            {categoryExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          </button>
           
-        </motion.section>
-        
-        <motion.section className="col-span-1 flex flex-col space-y-4">
-        <div className="relative w-full h-1/2">
-                <Image
-                  src="/images/vpn.png"
-                  alt="hero"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
-                />
+          {categoryExpanded && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="bg-white shadow-lg rounded-xl p-4 mt-2"
+            >
+              <div className="grid grid-cols-2 gap-2">
+                {categories.map((category) => (
+                  <motion.div
+                    key={category.name}
+                    className="flex items-center p-2 hover:bg-gray-50 rounded"
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    {category.icon}
+                    <span className="ml-2 text-sm">{category.name}</span>
+                  </motion.div>
+                ))}
               </div>
-              <div className="relative w-full h-1/2">
-                <Image
-                  src="/images/ai.png"
-                  alt="hero"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
-                />
-              </div>
-        </motion.section>
+            </motion.div>
+          )}
+        </div>
         
-      </div>
-       
+        {/* Desktop and tablet layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          {/* Sidebar Categories - Hidden on mobile */}
+          <motion.aside 
+            className="hidden lg:block bg-white shadow-lg rounded-xl p-5"
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <ul className="space-y-4 text-gray-700">
+              {categories.map((category) => (
+                <Link href={category.path} key={category.name}>
+                <motion.li 
+                  key={category.name} 
+                  className="flex items-center space-x-3 hover:text-blue-600 transition cursor-pointer hover:scale-105 mt-2"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  {category.icon}
+                  <span className="font-semibold">{category.name}</span>
+                </motion.li>
+                </Link>
+              ))}
+            </ul>
+          </motion.aside>
 
-      {/* Sản phẩm nổi bật */}
+          {/* Sliding Main Banner */}
+          <motion.section 
+            className="lg:col-span-2 relative bg-cover bg-center rounded-xl shadow-lg h-64 md:h-80 lg:h-full overflow-hidden"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+          >
+            {/* Banner Slider */}
+            <div className="relative w-full h-full">
+              {/* Slides */}
+              <div className="relative w-full h-full">
+                {bannerSlides.map((slide, index) => (
+                  <div 
+                    key={slide.id} 
+                    className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${
+                      currentBanner === index ? "opacity-100" : "opacity-0 pointer-events-none"
+                    }`}
+                  >
+                    <Image
+                      src={slide.image}
+                      alt={slide.alt}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                    
+                    {/* Optional: Text overlay for each slide */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
+                      <h3 className="text-lg md:text-xl font-bold">{slide.title}</h3>
+                      <p className="text-sm md:text-base">{slide.description}</p>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Navigation Arrows */}
+                <button 
+                  onClick={prevSlide}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 rounded-full p-2 z-10"
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft size={24} className="text-white" />
+                </button>
+                
+                <button 
+                  onClick={nextSlide}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 rounded-full p-2 z-10"
+                  aria-label="Next slide"
+                >
+                  <ChevronRight size={24} className="text-white" />
+                </button>
+                
+                {/* Slide Indicators */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+                  {bannerSlides.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                        currentBanner === index ? "bg-white" : "bg-white/50"
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.section>
+          
+          {/* Side banners - Horizontal on mobile */}
+          <motion.section className="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-4">
+            <div className="relative w-full h-32 md:h-40 lg:h-1/2">
+              <Image
+                src="/images/vpn.png"
+                alt="VPN"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-lg"
+              />
+            </div>
+            <div className="relative w-full h-32 md:h-40 lg:h-1/2">
+              <Image
+                src="/images/ai.png"
+                alt="AI"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-lg"
+              />
+            </div>
+          </motion.section>
+        </div>
+      </div>
+
+      {/* Rest of your homepage remains the same */}
+      {/* Products Sections - Optimized for all devices */}
+      {/* Featured Products */}
       <section className="container mx-auto px-4 mt-10 text-black">
         <motion.h2 
           className="text-2xl font-bold"
@@ -405,9 +542,6 @@ export default function Home() {
       </section>
       
     </motion.div>
-
-    
-    
   );
 }
 const products = [
@@ -470,15 +604,15 @@ const products = [
 ];
 
 const categories = [
-  { name: "Giải trí", icon: <Gamepad2 size={22} className="text-blue-500" /> },
-  { name: "Làm việc", icon: <Briefcase size={22} className="text-green-500" /> },
-  { name: "Học tập", icon: <GraduationCap size={22} className="text-orange-500" /> },
-  { name: "Game Steam", icon: <Monitor size={22} className="text-red-500" /> },
-  { name: "Edit Ảnh - Video", icon: <Paintbrush size={22} className="text-purple-500" /> },
-  { name: "Window, Office", icon: <FileText size={22} className="text-gray-600" /> },
-  { name: "Google Drive", icon: <FileText size={22} className="text-yellow-500" /> },
-  { name: "Steam Wallet", icon: <Gift size={22} className="text-indigo-500" /> },
-  { name: "Diệt Virus", icon: <Shield size={22} className="text-red-600" /> },
+  { name: "Giải trí", icon: <Gamepad2 size={22} className="text-blue-500" />, path: "/categories/entertainment" },
+  { name: "Làm việc", icon: <Briefcase size={22} className="text-green-500" />, path: "/categories/work" },
+  { name: "Học tập", icon: <GraduationCap size={22} className="text-orange-500" />, path: "/categories/education" },
+  { name: "Game Steam", icon: <Monitor size={22} className="text-red-500" />, path: "/categories/steam" },
+  { name: "Edit Ảnh - Video", icon: <Paintbrush size={22} className="text-purple-500" />, path: "/categories/editing" },
+  { name: "Window, Office", icon: <FileText size={22} className="text-gray-600" />, path: "/categories/microsoft" },
+  { name: "Google Drive", icon: <FileText size={22} className="text-yellow-500" />, path: "/categories/google" },
+  { name: "Steam Wallet", icon: <Gift size={22} className="text-indigo-500" />, path: "/categories/steam-wallet" },
+  { name: "Diệt Virus", icon: <Shield size={22} className="text-red-600" />, path: "/categories/antivirus" },
 ];
 
 const heroApps = [

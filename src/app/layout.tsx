@@ -1,15 +1,35 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "@/app/context/CartContext";
-import Layout from "@/components/layout";
-import React from "react";
+import { NextAuthProvider } from "./providers/NextAuthProvider";
+import { CartProvider } from "./context/CartContext";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Your E-Commerce App",
+  description: "Buy digital products online",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
-      <body>
-        <CartProvider>
-          <Layout>{children}</Layout>
-        </CartProvider>
+      <body className={inter.className}>
+        <NextAuthProvider>
+          <CartProvider>
+            <Header />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </CartProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -53,6 +54,13 @@ export default function Login() {
       <button onClick={() => signIn("google")} className="mt-4 w-full bg-red-500 text-white py-2 rounded">
         Đăng nhập với Google
       </button>
+
+      <p className="mt-6 text-center text-gray-600">
+        Chưa có tài khoản? 
+        <Link href="/register" className="text-blue-600 hover:underline ml-1">
+          Đăng ký ngay
+        </Link>
+      </p>
     </div>
   );
 }

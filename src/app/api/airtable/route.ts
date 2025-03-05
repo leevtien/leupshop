@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const category = searchParams.get("category");
+
   const apiKey = process.env.AIRTABLE_API_KEY;
   const baseId = process.env.AIRTABLE_BASE_ID;
   const tableName = process.env.AIRTABLE_TABLE_NAME;
@@ -29,15 +32,23 @@ export async function GET() {
     }
 
     const data = await res.json();
-    console.log("Dữ liệu từ Airtable:", data);
-
-    return NextResponse.json(data.records.map((record: any) => ({
+    let products = data.records.map((record: any) => ({
       id: record.id,
       name: record.fields.name || "Không có tên",
       price: record.fields.price || 0,
       description: record.fields.description || "Không có mô tả",
       image: record.fields.image ? record.fields.image[0].url : "/default-image.jpg",
-    })));
+      category: record.fields.Category || "other"
+    }));
+
+    // Apply category filter if specified
+    if (category) {
+      products = products.filter((product: any) => 
+        product.category?.toLowerCase() === category.toLowerCase()
+      );
+    }
+
+    return NextResponse.json(products);
   } catch (error) {
     console.error("Lỗi khi kết nối Airtable:", error);
     return NextResponse.json({ error: "Lỗi server" }, { status: 500 });
